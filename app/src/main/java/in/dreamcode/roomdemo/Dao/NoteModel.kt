@@ -6,11 +6,12 @@ import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 
+
 @Entity(tableName = "NoteModel")
 class NoteModel() : Parcelable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Long? = 0
+    var id: Long? = null
     @ColumnInfo(name = "title")
     var title: String = ""
     @ColumnInfo(name = "description")
@@ -46,6 +47,4 @@ class NoteModel() : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 }
-

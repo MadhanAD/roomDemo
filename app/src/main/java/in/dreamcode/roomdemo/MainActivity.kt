@@ -1,8 +1,9 @@
 package `in`.dreamcode.roomdemo
 
-import `in`.dreamcode.roomdemo.Dao.DbDao
 import `in`.dreamcode.roomdemo.Dao.AppDatabase
+import `in`.dreamcode.roomdemo.Dao.DbDao
 import `in`.dreamcode.roomdemo.Dao.NoteModel
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -18,7 +19,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
 
         val noteModel = NoteModel()
-        noteModel.id = System.currentTimeMillis()
         noteModel.title = mInputText?.text.toString()
         noteModel.dataTime = System.currentTimeMillis()
         noteModel.description = noteModel.title.plus(noteModel.dataTime)
@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         mInputText?.setText("")
     }
 
-    private fun log(info: String){
-        Log.e("MainActivity ",info)
+    private fun log(info: String) {
+        Log.e("MainActivity ", info)
     }
 
     private var mInputText: EditText? = null
@@ -70,20 +70,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         noteAdapter = RvAdapter(noteList, this@MainActivity)
         mRcView?.adapter = noteAdapter
 
+        noteAdapter?.setOnItemClickListener(mOnItemClickListener)
+
     }
 
     private fun getAllNotes() {
         val listData = mDbDao?.getAllNote() as List<NoteModel>
 
         noteList.clear()
-        for (i in listData.indices){
+        for (i in listData.indices) {
             noteList.add(listData[i])
         }
 
         noteAdapter?.notifyDataSetChanged()
-
-        log("noteList ".plus(noteList.size))
-        log("noteAdapterList ".plus(noteAdapter?.itemCount))
-
     }
+
+    private val mOnItemClickListener: RvAdapter.OnItemClickListener = object : RvAdapter.OnItemClickListener {
+        override fun onClick(position: Int) {
+            val secondIntent = Intent(this@MainActivity, SecondActivity::class.java)
+            secondIntent.putExtra(SecondActivity.MODEL_ID, noteList[position].id)
+            startActivity(secondIntent)
+        }
+    }
+
 }
